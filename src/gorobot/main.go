@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"net/http"
 
 	"bot"
@@ -16,7 +17,7 @@ var (
 	keywords map[string]bot.KeywordActionFn
 )
 
-func RunBot(address, user, nick, real string) error {
+func RunBot(address, user, nick, real string, channels ...string) error {
 	// Connect to the IRC server and register there
 	server, err := bot.Connect(address, &bot.Identity{real, []string{nick}})
 	if err != nil {
@@ -30,8 +31,10 @@ func RunBot(address, user, nick, real string) error {
 	if err = irc.ChangeNick(io, nick); err != nil {
 		return err
 	}
-	if err = irc.Join(io, "#ubuntu-si"); err != nil {
-		return err
+	for _, channel := range channels {
+		if err = irc.Join(io, channel); err != nil {
+			return err
+		}
 	}
 	// Run a new state machine
 	fsm := irc.NewMachine(io)
@@ -89,5 +92,7 @@ func main() {
 		str := fmt.Sprintf("%s, temp.: %f, humidity: %d%%", data.Weather[0].Description, data.Main.Temp, data.Main.Humidity)
 		return irc.Message(rw, from, str)
 	}}
-	log.Fatal(RunBot("irc.freenode.net:6667", "joa", "avg_joe_bot", "gorobot"))
+	address := os.Args[1]
+	nick := os.Args[2]
+	log.Fatal(RunBot(address, nick, nick, nick, os.Args[3:]...))
 }

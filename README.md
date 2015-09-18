@@ -1,0 +1,2 @@
+# gorobot
+Small IRC bot

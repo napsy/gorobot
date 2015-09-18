@@ -63,7 +63,7 @@ func main() {
 		return irc.Message(rw, from, resp)
 
 	}, ",w": func(rw *bufio.ReadWriter, from, msg string) error {
-		resp, err := http.Get("http://api.openweathermap.org/data/2.5/weather?q=" + msg)
+		resp, err := http.Get("http://api.openweathermap.org/data/2.5/weather?q=" + msg + "&units=metric")
 		if err != nil {
 			log.Printf("Error fetching weather: %v", err)
 			return irc.Message(rw, from, "(error fetching data)")
@@ -89,7 +89,7 @@ func main() {
 			log.Printf("Error fetching weather: %v", err)
 			return irc.Message(rw, from, "(error fetching data)")
 		}
-		str := fmt.Sprintf("%s, temp.: %f, humidity: %d%%", data.Weather[0].Description, data.Main.Temp, data.Main.Humidity)
+		str := fmt.Sprintf("%s, temp.: %.1f℃, humidity: %d%%", data.Weather[0].Description, data.Main.Temp, data.Main.Humidity)
 		return irc.Message(rw, from, str)
 	}}
 	address := os.Args[1]

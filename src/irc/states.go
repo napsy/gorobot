@@ -33,19 +33,15 @@ func (m *machine) Run() {
 		}
 	}()
 	go func() {
-		for {
-			time.Sleep(time.Minute)
-			m.l.Lock()
+		for range time.After(time.Minute) {
+			log.Printf("PING-ing server ...")
 			if err := Ping(m.rw, ":irc.freenode.net"); err != nil {
 				log.Printf("PING error: %v", err)
 			}
-			m.l.Unlock()
 		}
 	}()
 	for state := stateStart; state != nil; {
-		m.l.Lock()
 		state = state(m)
-		m.l.Unlock()
 	}
 	log.Printf("Ending state machine, last line was '%s'", m.line)
 }
@@ -64,7 +60,6 @@ func stateStart(m *machine) stateFn {
 	if err != nil {
 		return nil
 	}
-	
 	m.tokens = strings.Split(m.line, " ")
 	// Server commands
 	switch m.tokens[0] {
@@ -81,9 +76,11 @@ func stateStart(m *machine) stateFn {
 }
 
 func stateMsg(m *machine) stateFn {
-	msgEnd := strings.Index(m.line, "\r\n")
-	msg := m.line[strings.LastIndex(m.line, ":")+1 : msgEnd]
 	from := m.tokens[2]
+	msgStart := strings.Index(m.line, from) + len(from)+2
+	msgEnd := strings.Index(m.line, "\r\n")
+	msg := m.line[msgStart:msgEnd]
+	
 	if m.tokens[2][0] == '#' {
 		// Channel messages
 		idx := strings.Index(m.tokens[0], "!~")

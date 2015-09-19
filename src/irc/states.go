@@ -57,12 +57,14 @@ func stateStart(m *machine) stateFn {
 }
 
 func stateMsg(m *machine) stateFn {
+	log.Printf("PRIVMSG: '%s'", m.line)
 	msgEnd := strings.Index(m.line, "\r\n")
 	msg := m.line[strings.LastIndex(m.line, ":")+1:msgEnd]
-	from := m.tokens[2]
 	if m.tokens[2][0] == '#' {
 		// Channel messages
-		log.Printf("CHANNEL '%s': %s", from, msg)
+		idx := strings.Index(m.tokens[0], "!~")
+		fromUser := m.tokens[0][1:idx]
+		log.Printf("CHANNEL '%s' <%s>: %s", from, fromUser, msg)
 	} else {
 		// Private messages
 		log.Printf("PRIVATE '%s': %s", from, msg)

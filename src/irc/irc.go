@@ -1,8 +1,8 @@
 package irc
 
 import (
-	"fmt"
 	"bufio"
+	"fmt"
 )
 
 func Register(rw *bufio.ReadWriter, user, real string) error {
@@ -43,7 +43,6 @@ func Join(rw *bufio.ReadWriter, channel string) error {
 	rw.Flush()
 	return nil
 }
-
 
 func Part(rw *bufio.ReadWriter, channel string) error {
 	var (

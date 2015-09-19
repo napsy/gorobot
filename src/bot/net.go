@@ -1,21 +1,21 @@
 package bot
 
 import (
-	"net"
 	"bufio"
+	"net"
 )
 
 type KeywordActionFn func(rw *bufio.ReadWriter, from, message string) error
 type Identity struct {
-	RealName string
+	RealName  string
 	Nicknames []string
 }
 
 type Server struct {
-	Name string
+	Name    string
 	Address string // host:port
 
-	c net.Conn
+	c     net.Conn
 	ident *Identity
 }
 
@@ -26,7 +26,7 @@ func (s *Server) IO() *bufio.ReadWriter {
 func Connect(address string, ident *Identity) (*Server, error) {
 	var (
 		server *Server = &Server{Address: address, ident: ident}
-		err error
+		err    error
 	)
 	server.c, err = net.Dial("tcp4", address)
 	if err != nil {

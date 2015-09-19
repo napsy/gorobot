@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"net/http"
+	"os"
 
 	"bot"
 	"irc"

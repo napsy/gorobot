@@ -1,9 +1,9 @@
 package irc
 
 import (
-	"strings"
 	"bufio"
 	"log"
+	"strings"
 
 	"bot"
 )
@@ -12,11 +12,11 @@ import (
 type stateFn func(*machine) stateFn
 
 type machine struct {
-	rw *bufio.ReadWriter
-	line string
+	rw     *bufio.ReadWriter
+	line   string
 	tokens []string
 	tokenN int
-	errCh chan error
+	errCh  chan error
 
 	keywords map[string]bot.KeywordActionFn
 }
@@ -59,7 +59,7 @@ func stateStart(m *machine) stateFn {
 func stateMsg(m *machine) stateFn {
 	log.Printf("PRIVMSG: '%s'", m.line)
 	msgEnd := strings.Index(m.line, "\r\n")
-	msg := m.line[strings.LastIndex(m.line, ":")+1:msgEnd]
+	msg := m.line[strings.LastIndex(m.line, ":")+1 : msgEnd]
 	if m.tokens[2][0] == '#' {
 		// Channel messages
 		idx := strings.Index(m.tokens[0], "!~")
@@ -87,7 +87,7 @@ func stateMsg(m *machine) stateFn {
 
 func statePing(m *machine) stateFn {
 	msgEnd := strings.Index(m.line, "\r\n")
-	msg := m.line[strings.LastIndex(m.line, ":")+1:msgEnd]
+	msg := m.line[strings.LastIndex(m.line, ":")+1 : msgEnd]
 	log.Printf("PING from %s", msg)
 	if err := Pong(m.rw, m.tokens[1]); err != nil {
 		return nil

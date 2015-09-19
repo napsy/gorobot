@@ -72,7 +72,20 @@ func Quit(rw *bufio.ReadWriter, reason string) error {
 
 func Pong(rw *bufio.ReadWriter, message string) error {
 	var (
-		str string = fmt.Sprintf("PONG :%s\r\n", message)
+		str string = fmt.Sprintf("PONG %s\r\n", message)
+		err error
+	)
+	_, err = rw.Write([]byte(str))
+	if err != nil {
+		return err
+	}
+	rw.Flush()
+	return nil
+}
+
+func Ping(rw *bufio.ReadWriter, message string) error {
+	var (
+		str string = fmt.Sprintf("PING %s\r\n", message)
 		err error
 	)
 	_, err = rw.Write([]byte(str))

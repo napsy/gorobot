@@ -39,7 +39,9 @@ func RunBot(address, user, nick, real string, channels ...string) error {
 	// Run a new state machine
 	fsm := irc.NewMachine(io)
 	fsm.Keywords(keywords)
-	fsm.Run()
+	for {
+		fsm.Run()
+	}
 
 	// Connection ended, deinitialize
 	server.Close()

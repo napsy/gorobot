@@ -1,4 +1,5 @@
 // +build ignore
+
 package irc
 
 // This probably belongs to the 'bot' package
